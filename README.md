@@ -1,5 +1,5 @@
 # Osu Replay Key Overlay
-A python script that generates a video (by default .mp4) of a key overlay given an osu!std replay (.osr file) <\br>
+A python script that generates a video (by default .mp4) of a key overlay given an osu!std replay (.osr file)
 
 ## Customisation of your file
 You can change the output file by modifing these variables: </br>
@@ -29,3 +29,5 @@ $ yay -S ffmpeg
 ```
 $ python parse.py <replay_path> <output_path>
 ```
+## Example Output
+https://github.com/KreconyMakaron/osu-replay-key-overlay/assets/55319736/16b1685a-88e3-4a1b-99eb-6bf8620ee0b8
