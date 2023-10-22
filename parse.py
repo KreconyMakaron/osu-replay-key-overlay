@@ -98,8 +98,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
     print("Combining into video...")
     (
         ffmpeg
-        .input(f'{tmpdir}/*.jpg', pattern_type='glob', framerate=60)
-        .output(path_to_output, framerate=60)
+        .input(f'{tmpdir}/*.jpg', pattern_type='glob', framerate=FPS)
+        .output(path_to_output, framerate=FPS)
         .run()
     )   
 
