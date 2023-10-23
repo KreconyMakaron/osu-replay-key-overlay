@@ -31,3 +31,5 @@ $ python parse.py <replay_path> <output_path>
 ```
 ## Example Output
 https://github.com/KreconyMakaron/osu-replay-key-overlay/assets/55319736/16b1685a-88e3-4a1b-99eb-6bf8620ee0b8
+
+And then if you edit it and add to a video you can create cpol-like replays like [this](https://www.youtube.com/watch?v=-mODyQMSnas)
