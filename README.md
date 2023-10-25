@@ -8,6 +8,7 @@ You can change the output file by modifing these variables: </br>
 - KEYWIDTH - width of the blocks (keep in mind that KEYWIDTH*2 should be <= WIDTH)
 - SEGMENTS - the amount of segments the height is divided into. The blocks travel a segment each frame so think of this as controlling the speed.
 - COLOR - the color of the blocks in hex code
+- GRADIENT_PERCENTAGE - make the blocks fade away, starting at some percentage of the HEIGHT (0 = No gradient)
 
 ## Dependencies
 The required python dependencies are:
