@@ -2,7 +2,7 @@ import osrparse as os
 import sys
 import ffmpeg
 import tempfile
-from PIL import Image, ImageDraw 
+from PIL import Image, ImageDraw, ImageChops
 
 WIDTH = 100                 # WIDTH OF VIDEO
 HEIGHT = 400                # HEIGHT OF VIDEO
@@ -10,12 +10,22 @@ FPS = 60                    # FRAMERATE OF VIDEO
 KEYWIDTH = 30               # WIDTH OF KEYS IN PIXELS
 SEGMENTS = 100              # AMOUNT OF SEGMENTS IN HEIGHT (BLOCKS MOVE ONE SEGMENT EACH FRAME)
 COLOR = "#FFFFFF"           # COLOR OF THE BLOCKS
+GRADIENT_PERCENT = 0.3      # PERCENT OF THE SCREEN THAT THE GRADIENT OCCUPIES (0 = NO GRADIENT)
 
 DELTA_TIME = 1000/FPS
 PADDING = (WIDTH - 2*KEYWIDTH) / 3
 FRAMEHEIGHT = HEIGHT/SEGMENTS
 K1POS = PADDING
 K2POS = 2*PADDING + KEYWIDTH
+
+gradient_image = Image.new("L", (WIDTH, HEIGHT))
+
+for i in range(0, int(HEIGHT*GRADIENT_PERCENT)):
+    for j in range(0, WIDTH):
+        gradient_image.putpixel((j, i), (int(255*i/(HEIGHT*GRADIENT_PERCENT))))
+for i in range(int(HEIGHT*GRADIENT_PERCENT), HEIGHT):
+    for j in range(0, WIDTH):
+        gradient_image.putpixel((j, i), (255))
 
 def drawFrame(frame, s1, s2):
     img = Image.new("RGB", (WIDTH, HEIGHT)) 
@@ -32,6 +42,7 @@ def drawFrame(frame, s1, s2):
         if seg[0] > frame_end: break
         img1.rectangle((K2POS, (max(seg[0], frame)-frame)*FRAMEHEIGHT, K2POS+KEYWIDTH, (min(seg[1], frame_end)-frame)*FRAMEHEIGHT), fill=COLOR)
        
+    img = ImageChops.multiply(img, gradient_image.convert("RGB"))
     img.save(f"{tmpdir}/{frame:06d}.jpg", "JPEG")
 
 if len(sys.argv) < 3:
@@ -93,13 +104,16 @@ while frame*DELTA_TIME <= total_time:
 
 with tempfile.TemporaryDirectory() as tmpdir:
     print(f"Drawing Frames to {tmpdir}...")
-    for i in range(0, frame): drawFrame(i, key1_segments, key2_segments)
+    for i in range(0, frame): 
+        print(f"\rFrame {i}/{frame-1} - {i/(frame-1)*100:.2f}%", end="")
+        drawFrame(i, key1_segments, key2_segments)
 
-    print("Combining into video...")
+    print(f"\nRendering ({WIDTH}x{HEIGHT} @ {FPS}FPS)...")
+    
     (
         ffmpeg
         .input(f'{tmpdir}/*.jpg', pattern_type='glob', framerate=FPS)
-        .output(path_to_output, framerate=FPS)
+        .output(path_to_output, framerate=FPS, loglevel='warning')
         .run()
     )   
 
